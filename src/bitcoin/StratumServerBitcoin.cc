@@ -344,7 +344,7 @@ int ServerBitcoin::checkShare(const ShareBitcoin &share,
                        const uint32_t versionMask,
                        const uint256 &jobTarget, const string &workFullName,
                        string *userCoinbaseInfo) {
-  shared_ptr<StratumJobEx> exJobPtrShared = GetJobRepository()->getStratumJobEx(share.jobId_);
+  shared_ptr<StratumJobEx> exJobPtrShared = GetJobRepository()->getStratumJobEx(share.jobid_);
   StratumJobExBitcoin* exJobPtr = static_cast<StratumJobExBitcoin*>(exJobPtrShared.get());
   if (exJobPtr == nullptr) {
     return StratumStatus::JOB_NOT_FOUND;
@@ -391,9 +391,9 @@ int ServerBitcoin::checkShare(const ShareBitcoin &share,
     // build found block
     //
     FoundBlock foundBlock;
-    foundBlock.jobId_    = share.jobId_;
-    foundBlock.workerId_ = share.workerHashId_;
-    foundBlock.userId_   = share.userId_;
+    foundBlock.jobId_    = share.jobid_;
+    foundBlock.workerId_ = share.workerhashid_;
+    foundBlock.userId_   = share.userid_;
     foundBlock.height_   = sjob->height_;
     memcpy(foundBlock.header80_, (const uint8_t *)&header, sizeof(CBlockHeader));
     snprintf(foundBlock.workerFullName_, sizeof(foundBlock.workerFullName_),
@@ -405,7 +405,7 @@ int ServerBitcoin::checkShare(const ShareBitcoin &share,
     GetJobRepository()->markAllJobsAsStale();
 
     LOG(INFO) << ">>>> found a new block: " << blkHash.ToString()
-    << ", jobId: " << share.jobId_ << ", userId: " << share.userId_
+    << ", jobId: " << share.jobid_ << ", userId: " << share.userid_
     << ", by: " << workFullName << " <<<<";
   }
 
@@ -426,9 +426,9 @@ int ServerBitcoin::checkShare(const ShareBitcoin &share,
     // build data needed to submit block to RSK
     //
     RskSolvedShareData shareData;
-    shareData.jobId_    = share.jobId_;
-    shareData.workerId_ = share.workerHashId_;
-    shareData.userId_   = share.userId_;
+    shareData.jobId_    = share.jobid_;
+    shareData.workerId_ = share.workerhashid_;
+    shareData.userId_   = share.userid_;
     // height = matching bitcoin block height
     shareData.height_   = sjob->height_;
     snprintf(shareData.feesForMiner_, sizeof(shareData.feesForMiner_), "%s", sjob->feesForMiner_.c_str());
@@ -457,7 +457,7 @@ int ServerBitcoin::checkShare(const ShareBitcoin &share,
     // log the finding
     //
     LOG(INFO) << ">>>> found a new RSK block: " << blkHash.ToString()
-    << ", jobId: " << share.jobId_ << ", userId: " << share.userId_
+    << ", jobId: " << share.jobid_ << ", userId: " << share.userid_
     << ", by: " << workFullName << " <<<<";
   }
 
@@ -484,7 +484,7 @@ int ServerBitcoin::checkShare(const ShareBitcoin &share,
                                                      " \"rpc_addr\":\"%s\","
                                                      " \"rpc_userpass\":\"%s\""
                                                      "}",
-                                                     share.jobId_,
+                                                     share.jobid_,
                                                      sjob->nmcAuxBlockHash_.ToString().c_str(),
                                                      blockHeaderHex.c_str(),
                                                      coinbaseTxHex.c_str(),
@@ -496,7 +496,7 @@ int ServerBitcoin::checkShare(const ShareBitcoin &share,
 
     LOG(INFO) << ">>>> found namecoin block: " << sjob->nmcHeight_ << ", "
     << sjob->nmcAuxBlockHash_.ToString()
-    << ", jobId: " << share.jobId_ << ", userId: " << share.userId_
+    << ", jobId: " << share.jobid_ << ", userId: " << share.userid_
     << ", by: " << workFullName << " <<<<";
   }
 
